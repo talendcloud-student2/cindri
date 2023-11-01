@@ -1,0 +1,38 @@
+Select A.Polno,A.Renno,A.certifno,A.Endtno,B.Insno Instalment_Number,B.Insdt Due_Date,
+       D.Lob_Desc,Case When E.Issuedt <= '31-DEC-17' Then DocType||'-'||DocYear||'-'||Off_DChar||'-'||LPAD(DocNo,5,0) Else 
+                            DocType||'-'||DocYear||'-'||Off_DChar||LPAD(BrCode,2,0)||'-'||LPAD(DocNo,5,0) End Doc_No,
+                            E.Issuedt Doc_date                             
+From   Policy A,Instal B,Pol_Type C,Lobiz D,Dr_cr_Hdr E
+Where  A.Ckey = B.Ckey
+And    A.Certifno = B.Certifno
+And    A.Endtno   = B.Endtno
+And    Nvl(A.Endorsed,'L') != 'C'
+And    A.Polcd    = C.Polcd
+And    C.Lob_Code = D.Lob_Code
+And    B.Ckey     = E.Ckey
+And    B.Certifno = E.Certifno
+And    B.Endtno   = E.Endtno
+And    B.Currcd   = E.Currcd
+And    B.Insno    = E.Insno
+AND	   E.Entry_of = 'P'
+And    Exists (Select 1 From Instal where ckey=B.ckey And certifno = B.Certifno And Endtno = B.Endtno and Currcd = B.Currcd And insno > 1)
+--And    A.ckey='10201071009576'
+UNION
+Select A.Polno,A.Renno,A.certifno,A.Endtno,B.Insno No_Of_Instalment,B.Insdt Due_Date,
+       D.Lob_Desc,Case When E.Issuedt <= '31-DEC-17' Then E.DocType||'-'||E.DocYear||'-'||E.Off_DChar||'-'||LPAD(E.DocNo,5,0) Else 
+                            E.DocType||'-'||E.DocYear||'-'||E.Off_DChar||LPAD(E.BrCode,2,0)||'-'||LPAD(E.DocNo,5,0) End Doc_No,
+                            E.Issuedt Doc_date
+From   Policy A,Instal_vl B,Pol_Type C,Lobiz D,Dr_cr_Hdr E
+Where  A.Ckey = B.Ckey
+And    A.Certifno = B.Certifno
+And    A.Endtno   = B.Endtno
+And    Nvl(A.Endorsed,'L') != 'C'
+And    A.Polcd    = C.Polcd
+And    C.Lob_Code = D.Lob_Code
+And    B.Ckey     = E.Ckey(+)
+And    B.Certifno = E.Certifno(+)
+And    B.Endtno   = E.Endtno(+)
+And    B.Currcd   = E.Currcd(+)
+And    B.Insno    = E.Insno(+)
+AND	   E.Entry_of(+) = 'P'
+--And    A.ckey='10301121000074'
